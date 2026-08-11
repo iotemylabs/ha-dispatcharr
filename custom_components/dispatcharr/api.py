@@ -230,6 +230,19 @@ class DispatcharrApiClient:
         """Return the live-stream status summary."""
         return await self._request("GET", "/proxy/ts/status")
 
-    async def get_epg_xml(self) -> str:
-        """Return the full XMLTV EPG document."""
-        return await self._request("GET", "/output/epg", is_json=False)
+    async def get_current_programs(
+        self, channel_uuids: list[str]
+    ) -> list[dict[str, Any]]:
+        """Return the currently-airing program for each given channel UUID.
+
+        Channels without EPG data are simply absent from the response.
+        """
+        return await self._request(
+            "POST",
+            "/api/epg/current-programs/",
+            json={"channel_uuids": channel_uuids},
+        )
+
+    def logo_url(self, logo_id: int) -> str:
+        """Public (unauthenticated) URL for a channel logo."""
+        return f"{self.base_url}/api/channels/logos/{logo_id}/cache/"
