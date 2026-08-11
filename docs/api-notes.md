@@ -59,9 +59,11 @@ slugifies, tries exact match, then longest substring match.
 1. **`_async_update_data` returns `{}` when no streams are active** (`__init__.py:164`). Combined with
    `async_write_ha_state()` this is benign today, but it means "no data" and "no streams" are
    indistinguishable.
-2. **Ended streams are never removed from `_known_stream_ids`** (`media_player.py:57`). If a channel
-   stops and later restarts with the same UUID, `new_stream_ids` is empty, so the entity is never
-   re-added and stays permanently unavailable until HA restarts.
+2. **Ended streams are never removed from `_known_stream_ids`** (`media_player.py:57`).
+   *Correction (Phase 1):* this is less severe than first written. The entity object stays alive, so
+   when the same UUID streams again its `available` property flips back to True — it self-heals. The
+   actual consequence is that the entity registry accumulates an unavailable `media_player` for every
+   channel ever streamed, with no cleanup path. Registry hygiene, not a functional break.
 3. **`resolution` / `video_codec` / `audio_codec` are always empty.** See §4.1 — the summary status
    payload does not contain them. The media player advertises three attributes that never populate.
 4. **`ConfigFlow` performs no validation** (`config_flow.py:38`) — `async_create_entry` is called
