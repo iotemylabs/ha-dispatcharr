@@ -10,7 +10,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.exceptions import PlatformNotReady
 
 from .const import DOMAIN
-from . import DispatcharrDataUpdateCoordinator
+from .coordinator import DispatcharrDataUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
