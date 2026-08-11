@@ -9,11 +9,12 @@ from datetime import datetime, timezone
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import slugify
 
 from .api import DispatcharrApiClient, DispatcharrApiError
-from .const import DOMAIN, UPDATE_INTERVAL
+from .const import DOMAIN, MANUFACTURER, UPDATE_INTERVAL
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,9 +32,22 @@ class DispatcharrDataUpdateCoordinator(DataUpdateCoordinator):
         self.config_entry = config_entry
         self.client = client
         self.channel_map: dict = {}
+        self.server_version: str | None = None
 
         super().__init__(
             hass, _LOGGER, name=DOMAIN, update_interval=UPDATE_INTERVAL
+        )
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Shared device that groups all entities of this config entry."""
+        return DeviceInfo(
+            identifiers={(DOMAIN, self.config_entry.entry_id)},
+            name="Dispatcharr",
+            manufacturer=MANUFACTURER,
+            model="IPTV stream manager",
+            sw_version=self.server_version,
+            configuration_url=self.client.base_url,
         )
 
     async def async_populate_channel_map_from_xml(self) -> None:

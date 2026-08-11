@@ -1,0 +1,47 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Dispatcharr",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "ssl": "Use HTTPS",
+          "auth_method": "Authentication method"
+        }
+      },
+      "api_key": {
+        "title": "API key",
+        "description": "Generate an API key in Dispatcharr under System > Users. The key's user must be an admin.",
+        "data": {
+          "api_key": "API key"
+        }
+      },
+      "credentials": {
+        "title": "Credentials",
+        "description": "The account must be a Dispatcharr admin.",
+        "data": {
+          "username": "Username",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not reach Dispatcharr at this host and port.",
+      "invalid_auth": "Authentication was rejected. Check the API key or credentials.",
+      "not_admin": "Authenticated, but the user is not a Dispatcharr admin (or network access rules block this client).",
+      "unknown": "Unexpected error; check the Home Assistant log."
+    },
+    "abort": {
+      "already_configured": "This Dispatcharr instance is already configured."
+    }
+  },
+  "selector": {
+    "auth_method": {
+      "options": {
+        "api_key": "API key (recommended)",
+        "credentials": "Username and password"
+      }
+    }
+  }
+}

@@ -11,7 +11,6 @@ from homeassistant.components.media_player import (
     MediaType,
 )
 from homeassistant.const import STATE_PLAYING
-from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.exceptions import PlatformNotReady
 
@@ -72,7 +71,7 @@ class DispatcharrStreamMediaPlayer(CoordinatorEntity, MediaPlayerEntity):
         
         self._attr_name = name
         self._attr_unique_id = f"{coordinator.config_entry.entry_id}_{self._stream_id}"
-        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, coordinator.config_entry.entry_id)}, name="Dispatcharr")
+        self._attr_device_info = coordinator.device_info
 
     @property
     def available(self) -> bool:

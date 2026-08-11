@@ -5,7 +5,6 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
-from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.exceptions import PlatformNotReady
 
@@ -39,7 +38,7 @@ class DispatcharrTotalStreamSensor(CoordinatorEntity, SensorEntity):
         self._attr_name = "Total Active Streams"
         self._attr_unique_id = f"{coordinator.config_entry.entry_id}_total_streams"
         self._attr_icon = "mdi:play-network"
-        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, coordinator.config_entry.entry_id)}, name="Dispatcharr")
+        self._attr_device_info = coordinator.device_info
 
     @callback
     def _handle_coordinator_update(self) -> None:
