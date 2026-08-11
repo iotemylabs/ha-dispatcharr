@@ -3,7 +3,7 @@ from datetime import timedelta
 
 from homeassistant.const import Platform
 
-DOMAIN = "dispatcharr_sensor"
+DOMAIN = "dispatcharr"
 
 PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.MEDIA_PLAYER]
 

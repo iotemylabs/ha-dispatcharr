@@ -1,0 +1,13 @@
+{
+  "domain": "dispatcharr",
+  "name": "Dispatcharr",
+  "codeowners": ["@iotemylabs"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/iotemylabs/ha-dispatcharr",
+  "integration_type": "hub",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/iotemylabs/ha-dispatcharr/issues",
+  "requirements": [],
+  "version": "1.0.0"
+}
