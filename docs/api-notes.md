@@ -64,8 +64,10 @@ slugifies, tries exact match, then longest substring match.
    when the same UUID streams again its `available` property flips back to True — it self-heals. The
    actual consequence is that the entity registry accumulates an unavailable `media_player` for every
    channel ever streamed, with no cleanup path. Registry hygiene, not a functional break.
-3. **`resolution` / `video_codec` / `audio_codec` are always empty.** See §4.1 — the summary status
-   payload does not contain them. The media player advertises three attributes that never populate.
+3. ~~**`resolution` / `video_codec` / `audio_codec` are always empty.**~~ *Retracted after live testing:*
+   with a stream active, the **summary** payload does include `resolution`, `video_codec`, and
+   `audio_codec` (verified live: `384x216` / `h264` / `aac`). The source-derived claim in §4.1 that
+   these are detail-only was wrong for the basic path on 0.29.0. No extra per-channel calls needed.
 4. **`ConfigFlow` performs no validation** (`config_flow.py:38`) — `async_create_entry` is called
    unconditionally. Any host/credentials create an entry.
 5. **`const.PLATFORMS = ["sensor"]` is dead** — `__init__.py` defines its own `PLATFORMS` list.
@@ -247,16 +249,16 @@ clients[]  ← capped at 10, each: client_id, user_agent, ip_address,
 `pixel_format`, `source_bitrate`, `sample_rate`, `audio_channels`, `audio_bitrate`, `ffmpeg_speed`,
 `ffmpeg_fps`, `actual_fps`, `local_manager{healthy,connected,last_data_age}`, `diagnostics`, `total_data`.
 
-Three consequences:
+Consequences (revised after live testing):
 
-1. **The upstream integration's `resolution`/`video_codec`/`audio_codec` attributes can never populate**
-   — it only ever calls the summary endpoint. Confirms defect #3.
+1. ~~Codecs/resolution can never populate from the summary~~ — **wrong, retracted.** Live testing with
+   an active stream shows the summary payload includes `resolution`, `video_codec`, and `audio_codec`
+   (`384x216` / `h264` / `aac` observed). The source read above under-counted what the basic path emits
+   on 0.29.0. No per-channel detail calls are needed for these attributes.
 2. **`avg_bitrate_kbps` *is* in the summary** → `sensor.dispatcharr_total_bandwidth` (Phase 3) can be
    summed from the existing single call. Note it is an *average since stream start*, not instantaneous;
-   the entity name/description should not imply a live rate.
-3. Restoring the codec/resolution attributes costs **one extra request per active stream per poll**.
-   Recommend fetching detail only for channels that have clients, on the *slow* coordinator, and
-   flagging this as a Phase 4 poll-budget decision rather than doing it on the 10–15 s cycle.
+   the entity name/description should not imply a live rate. (Live payloads also carry the formatted
+   `avg_bitrate` string, e.g. `"3.05 Mbps"`.)
 
 `client_count` across channels backs `sensor.dispatcharr_total_clients`. Note `clients[]` is truncated
 at 10 while `client_count` is not — use `client_count` for the sensor, `clients[]` only for the
